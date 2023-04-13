@@ -42,9 +42,8 @@ tags:
 # L(specifiers,https://python-semanticversion.readthedocs.io/en/latest/#requirement-specification). Multiple version
 # range specifiers can be set and are separated by ','
 dependencies:
-  community.docker: 3.4.3
-  community.postgresql: 2.3.2
-  https://github.com/hyphacoop/ansible-common.git: e862f2c7c4e7b929e3216fa359e954bed9ec98e1
+  community.docker: '>=3.4.3'
+  community.postgresql: '>=2.3.2'
 
   
 

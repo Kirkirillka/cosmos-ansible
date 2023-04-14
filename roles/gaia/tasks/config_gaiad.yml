@@ -8,6 +8,9 @@
     gaiad add-genesis-account validator {{gaiad_validator_coins}} --home {{gaiad_home}} --keyring-backend="{{gaiad_validator_keyring}}"
   register: gaiad_create_validator_output
   become_user: "{{gaiad_user}}"
+  tags:
+    - config
+    - gaiad
 
 - name: save validator name, address, and mnemonic
   when: gaiad_create_validator
@@ -15,6 +18,9 @@
     content="{{gaiad_create_validator_output.stderr}}"
     dest="{{gaiad_home}}/validator.json"
   become_user: "{{gaiad_user}}"
+  tags:
+    - config
+    - gaiad
 
 - name: create genesis accounts
   when: gaiad_airdrop and gaiad_create_validator
@@ -24,6 +30,9 @@
     gaiad add-genesis-account {{ item }} {{gaiad_airdrop_coins}} --home {{gaiad_home}}
   become_user: "{{gaiad_user}}"
   loop: "{{ gaiad_airdrop_accounts }}"
+  tags:
+    - config
+    - gaiad
 
 - name: collect gentx
   when: gaiad_create_validator
@@ -33,6 +42,9 @@
     gaiad gentx validator {{gaiad_gentx_validator_stake}} --keyring-backend="{{gaiad_validator_keyring}}" --home {{gaiad_home}} --chain-id {{chain_id}}
     gaiad collect-gentxs --home {{gaiad_home}}
   become_user: "{{gaiad_user}}"
+  tags:
+    - config
+    - gaiad
 
 - name: patch genesis file with minimum deposit and short voting period
   when: gaiad_gov_testing
@@ -41,12 +53,18 @@
     jq '.app_state.gov.deposit_params.min_deposit[0].amount |= "1"' genesis.json > temp.json
     jq '.app_state.gov.voting_params.voting_period |= "{{ gaiad_voting_period }}"' temp.json > genesis.json
     rm temp.json
+  tags:
+    - config
+    - gaiad
 
 - name: patch genesis file with specified denom
   replace:
     path: '{{gaiad_home}}/config/genesis.json'
     regexp: 'stake'
     replace: '{{gaiad_bond_denom}}'
+  tags:
+    - config
+    - gaiad
 
 # Get trust height automatically
 - name: obtain trust height
@@ -54,24 +72,36 @@
   script:
     get_trust_height.sh {{ statesync_rpc_servers.split(',')[0] }}
   register: trust_height
+  tags:
+    - config
+    - gaiad
 
 - name: obtain trust height block hash ID
   when: statesync_enabled and statesync_auto_populate
   script:
     get_trust_hash.sh {{ statesync_rpc_servers.split(',')[0] }} {{ trust_height.stdout }}
   register: trust_hash
+  tags:
+    - config
+    - gaiad
 
 - name: print trust height and hash ID
   when: statesync_enabled and statesync_auto_populate
   debug:
     msg: 'Height {{trust_height.stdout }} has hash ID {{ trust_hash.stdout }}'
   become_user: "{{gaiad_user}}"
+  tags:
+    - config
+    - gaiad
 
 - name: set state sync variables
   when: statesync_enabled and statesync_auto_populate
   set_fact:
     statesync_trust_height: "{{ trust_height.stdout }}"
     statesync_trust_hash: "{{ trust_hash.stdout }}"
+  tags:
+    - config
+    - gaiad
 
 # Config file generation
 - name: copy app.toml
@@ -81,6 +111,9 @@
     dest: '{{gaiad_home}}/config/app.toml'
     owner: '{{gaiad_user}}'
     group: '{{gaiad_user}}'
+  tags:
+    - config
+    - gaiad
 
 - name: copy config.toml
   when: config_toml_file is defined
@@ -89,6 +122,9 @@
     dest: '{{gaiad_home}}/config/config.toml'
     owner: '{{gaiad_user}}'
     group: '{{gaiad_user}}'
+  tags:
+    - config
+    - gaiad
 
 - name: copy node_key.json
   when: node_key_file is defined
@@ -97,6 +133,9 @@
     dest: '{{gaiad_home}}/config/node_key.json'
     owner: '{{gaiad_user}}'
     group: '{{gaiad_user}}'
+  tags:
+    - config
+    - gaiad
 
 - name: copy priv_validator_key.json
   when: priv_validator_key_file is defined
@@ -105,6 +144,9 @@
     dest: '{{gaiad_home}}/config/priv_validator_key.json'
     owner: '{{gaiad_user}}'
     group: '{{gaiad_user}}'
+  tags:
+    - config
+    - gaiad
 
 ## Addressbook config
 - name: copy addrbook.json
@@ -114,6 +156,9 @@
     dest: '{{gaiad_home}}/config/addrbook_file.json'
     owner: '{{gaiad_user}}'
     group: '{{gaiad_user}}'
+  tags:
+    - config
+    - gaiad
 
 - name: download addrbook.json from URL
   when: addrbook_url is defined
@@ -122,6 +167,9 @@
     dest: "{{gaiad_home}}/config/addrbook.json"
     owner: '{{gaiad_user}}'
     group: '{{gaiad_user}}'
+  tags:
+    - config
+    - gaiad
 
 ## Patching Config files
 - name: generate config json for patching toml files
@@ -130,6 +178,9 @@
     dest: '{{gaiad_home}}/config/ansible_vars.json'
     owner: '{{gaiad_user}}'
     group: '{{gaiad_user}}'
+  tags:
+    - config
+    - gaiad
 
 - name: patch .toml configs with ansible variables
   script: |
@@ -143,3 +194,6 @@
     path: '{{gaiad_home}}/config/ansible_vars.json'
     owner: '{{gaiad_user}}'
     group: '{{gaiad_user}}'
+  tags:
+    - config
+    - gaiad

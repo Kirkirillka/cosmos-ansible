@@ -64,7 +64,7 @@
     name: "{{node_user}}"
     append: true
     groups: adm
-    shell: /bin/bash
+    shell: "{{gaiad_shell}}"
     comment: User for chain and cosmovisor services
 
 # Stop existing services

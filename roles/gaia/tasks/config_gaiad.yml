@@ -187,6 +187,9 @@
     copy_config_vars.py --gaiad_home=$(echo {{gaiad_home}}) \
       --config_file=$(echo {{gaiad_home}}/config/ansible_vars.json)
   become_user: "{{gaiad_user}}"
+  tags:
+    - config
+    - gaiad
 
 - name: delete generated config json
   file:

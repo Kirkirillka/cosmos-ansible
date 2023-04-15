@@ -85,7 +85,7 @@
     - file_type.stat.mimetype == "application/gzip"
   ansible.builtin.unarchive:
     src: "{{node_user_home}}/genesis.data"
-    dest: "{{{{chain_home}}/config/genesis.json}}"
+    dest: "{{chain_home}}/config/genesis.json"
     remote_src: yes
   become_user: "{{node_user}}"
 

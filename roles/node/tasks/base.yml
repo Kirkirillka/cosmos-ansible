@@ -252,6 +252,7 @@
   # TODO: should we overwrite?
   shell: |
     cd $HOME
+    PATH=$PATH:/usr/local/go/bin:$HOME/go/bin
     {{chain_bin}} init {{ chain_moniker }} --home {{chain_home}} --chain-id {{chain_id}}
   become_user: "{{node_user}}"
 

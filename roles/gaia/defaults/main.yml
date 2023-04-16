@@ -8,6 +8,7 @@ go_version: 1.18.5
 gaiad_user: gaia
 gaiad_user_home: "/home/{{gaiad_user}}"
 gaiad_home: "{{gaiad_user_home}}/.gaia"
+gaiad_shell: "/sbin/nologin"
 gaiad_home_autoclear: false
 gaiad_unsafe_reset: false
 gaiad_version: v7.0.0

@@ -4,6 +4,7 @@ chain_binary_name: gaiad
 node_user: gaia
 node_user_home: "/home/{{node_user}}"
 chain_home: "{{node_user_home}}/.gaia"
+gaiad_shell: "/sbin/nologin"
 chain_home_clear: false
 node_unsafe_reset: false
 chain_version: v9.0.1

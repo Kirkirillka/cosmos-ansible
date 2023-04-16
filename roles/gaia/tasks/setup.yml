@@ -60,7 +60,7 @@
     name: "{{gaiad_user}}"
     append: true
     groups: adm
-    shell: /bin/bash
+    shell: "{{gaiad_shell}}"
     comment: User for gaiad and cosmovisor services
 
 # Stop existing services

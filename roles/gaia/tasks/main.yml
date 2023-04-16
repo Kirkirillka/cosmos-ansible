@@ -7,6 +7,9 @@
 
 - name: configure gaiad
   import_tasks: config_gaiad.yml
+  tags:
+    - config
+    - gaiad
 
 - name: set up faucet
   import_tasks: faucet.yml
